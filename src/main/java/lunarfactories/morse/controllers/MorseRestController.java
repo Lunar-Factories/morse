@@ -18,6 +18,7 @@ public class MorseRestController {
     @RequestMapping("/")
     public String getClientIp(HttpServletRequest request) {
         log.info(request.getRemoteAddr());
+        System.out.println("test");
         return service.translateIp(request.getRemoteAddr());
     }
 
