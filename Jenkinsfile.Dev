@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    tools {
+        maven 'maven 3.6.3'
+    }
+    stages {
+        stage('Clone Application') {
+            steps {
+                echo '=== Cloning Morse-Service ==='
+                git 'https://github.com/Lunar-Factories/morse.git'
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                echo '=== Building Morse-Service ==='
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+
+        stage('Test Application') {
+            steps {
+                echo '=== Testing Morse-Service ==='
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo '=== Building Docker Image ==='
+                
+            }
+        }
+    }
+    post {
+        always {
+            echo '========always========'
+        }
+        success {
+            echo '========pipeline executed successfully ========'
+        }
+        failure {
+            echo '========pipeline execution failed========'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
+    }
+}
